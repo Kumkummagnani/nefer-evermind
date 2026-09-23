@@ -1,9 +1,7 @@
 import React from 'react';
-import { Heart, Shield, PhoneCall } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
+import { Heart } from 'lucide-react';
 
 export default function Footer() {
-  const { currentUser } = useApp();
 
   return (
     <footer

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Globe, AlertCircle, Check, Zap } from 'lucide-react';
+import { Check, Zap } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { LANGUAGES, translations } from '../../locales/translations';
 import { sounds } from '../../services/soundEffects';

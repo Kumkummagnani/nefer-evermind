@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useMemo, useCallback } from 'react';
-import { LANGUAGES, translations } from '../locales/translations';
+import { translations } from '../locales/translations';
 import { sounds } from '../services/soundEffects';
 
 const AppContext = createContext(null);

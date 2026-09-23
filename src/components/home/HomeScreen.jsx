@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useApp } from '../../context/AppContext';
 import GroundingClock from '../common/GroundingClock';
 import RemindersView from '../reminders/RemindersView';

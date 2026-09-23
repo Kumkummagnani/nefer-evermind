@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, RotateCcw, Heart, Check, X, Sparkles } from 'lucide-react';
+import { ArrowLeft, RotateCcw, Heart, Check, X } from 'lucide-react';
 import { FAMILY_MEMBERS_DATA } from '../../assets/culturalData';
 import { useApp } from '../../context/AppContext';
 import { translations } from '../../locales/translations';

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Volume2, RotateCcw, Play, Pause, Check, X, Sparkles, BookOpen } from 'lucide-react';
+import { ArrowLeft, Volume2, RotateCcw, Pause, Check, X, BookOpen } from 'lucide-react';
 import { CULTURAL_STORIES } from '../../assets/culturalData';
 import { useApp } from '../../context/AppContext';
 import { useSpeechContext } from '../../context/SpeechContext';

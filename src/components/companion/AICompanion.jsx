@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-  Send, Mic, MicOff, Volume2, Key, Sparkles, Music,
-  Play, Pause, Square, AlertCircle, Heart, RotateCcw
+  Send, Mic, MicOff, Volume2, Key, Music,
+  Play, Square, AlertCircle
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { useSpeechContext } from '../../context/SpeechContext';

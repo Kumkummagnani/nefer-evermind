@@ -1,12 +1,11 @@
 import React from 'react';
-import { Bell, CheckCircle2, Clock, Calendar, Droplets, Pill, RefreshCw, Zap, Volume2 } from 'lucide-react';
+import { Bell, CheckCircle2, Clock, RefreshCw, Zap, Volume2 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { useReminders } from '../../context/ReminderContext';
 import { useSpeechContext } from '../../context/SpeechContext';
 import { translations } from '../../locales/translations';
 import TremorButton from '../common/TremorButton';
 import EscalationOverlay from './EscalationOverlay';
-import { sounds } from '../../services/soundEffects';
 
 export default function RemindersView() {
   const { currentUser } = useApp();

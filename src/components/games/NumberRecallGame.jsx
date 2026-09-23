@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, RotateCcw, Delete, Eye, EyeOff, Check, Sparkles } from 'lucide-react';
+import { ArrowLeft, RotateCcw, Delete, Check } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { translations } from '../../locales/translations';
 import TremorButton from '../common/TremorButton';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertOctagon, CheckCircle2, Phone, BellRing } from 'lucide-react';
+import { AlertOctagon, CheckCircle2, Phone } from 'lucide-react';
 import { useReminders } from '../../context/ReminderContext';
 import TremorButton from '../common/TremorButton';
 import { sounds } from '../../services/soundEffects';

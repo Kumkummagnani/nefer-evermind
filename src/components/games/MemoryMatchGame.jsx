@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, RotateCcw, Sparkles } from 'lucide-react';
+import { ArrowLeft, RotateCcw } from 'lucide-react';
 import { MEMORY_CARDS_DATA } from '../../assets/culturalData';
 import { useApp } from '../../context/AppContext';
 import { translations } from '../../locales/translations';
