@@ -1,0 +1,17 @@
+{
+  "name": "Evermind — Always with you",
+  "short_name": "Evermind",
+  "description": "Evermind: An AI-powered cognitive care and memory assistance platform for elderly dementia patients and family caregivers. Always with you.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FDFBF7",
+  "theme_color": "#9C4124",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
