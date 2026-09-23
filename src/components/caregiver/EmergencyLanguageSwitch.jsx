@@ -6,7 +6,7 @@ import { sounds } from '../../services/soundEffects';
 
 export default function EmergencyLanguageSwitch() {
   const { currentUser, emergencySwitchLanguage } = useApp();
-  const lang = currentUser.language || 'en-IN';
+  const lang = currentUser?.language || 'en-IN';
   const t = translations[lang] || translations['en-IN'];
 
   const handleSwitch = (targetLang) => {

@@ -185,6 +185,106 @@ export function ReminderProvider({ children, currentLanguage = 'en-IN', patientN
     setCaregiverModalAlert(null);
   }, []);
 
+  // Add new reminder
+  const addReminder = useCallback((newRem) => {
+    sounds.playSuccess();
+    const id = 'rem-' + Date.now();
+
+    // Calculate scheduledMinutesFromMidnight from time string e.g. "08:00 AM" or "14:30"
+    let scheduledMinutes = 8 * 60;
+    if (newRem.time) {
+      const match = newRem.time.match(/(\d+):(\d+)\s*(AM|PM)?/i);
+      if (match) {
+        let h = parseInt(match[1], 10);
+        const m = parseInt(match[2], 10);
+        const ampm = match[3] ? match[3].toUpperCase() : null;
+        if (ampm === 'PM' && h < 12) h += 12;
+        if (ampm === 'AM' && h === 12) h = 0;
+        scheduledMinutes = h * 60 + m;
+      }
+    }
+
+    const categoryIcons = {
+      medicine: '💊',
+      hydration: '💧',
+      activity: '🌿',
+      nutrition: '🍲',
+      personal: '🌙'
+    };
+
+    const icon = newRem.icon || categoryIcons[newRem.category] || '⏰';
+
+    const item = {
+      id,
+      title: typeof newRem.title === 'object' ? newRem.title : {
+        'en-IN': newRem.title || 'Personal Care Reminder',
+        'as-IN': newRem.title || 'Personal Care Reminder',
+        'bn-IN': newRem.title || 'Personal Care Reminder',
+        'mni-IN': newRem.title || 'Personal Care Reminder'
+      },
+      category: newRem.category || 'personal',
+      time: newRem.time || '09:00 AM',
+      date: newRem.date || 'Today',
+      description: newRem.description || '',
+      scheduledMinutesFromMidnight: scheduledMinutes,
+      icon,
+      done: false,
+      doneTimestamp: null
+    };
+
+    setReminders(prev => [...prev, item]);
+
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const remTitle = typeof newRem.title === 'object' ? (newRem.title['en-IN'] || 'Reminder') : (newRem.title || 'Reminder');
+    setActivityHistory(prev => [
+      {
+        id: 'create-' + Date.now(),
+        text: `New reminder added: ${remTitle}`,
+        time: timeStr,
+        type: 'success',
+        timestamp: Date.now()
+      },
+      ...prev
+    ]);
+
+    return item;
+  }, []);
+
+  // Delete an existing reminder
+  const deleteReminder = useCallback((reminderId) => {
+    sounds.playTap();
+    let deletedTitle = 'Reminder';
+
+    setReminders(prev => {
+      const target = prev.find(r => r.id === reminderId);
+      if (target) {
+        deletedTitle = typeof target.title === 'object' ? (target.title[currentLanguage] || target.title['en-IN']) : target.title;
+      }
+      return prev.filter(r => r.id !== reminderId);
+    });
+
+    setEscalations(prev => {
+      const updated = { ...prev };
+      delete updated[reminderId];
+      return updated;
+    });
+
+    setActiveTierAlert(prev => (prev && prev.reminderId === reminderId ? null : prev));
+    setCaregiverModalAlert(prev => (prev && prev.reminderId === reminderId ? null : prev));
+
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    setActivityHistory(prev => [
+      {
+        id: 'del-' + Date.now(),
+        text: `Reminder removed: ${deletedTitle}`,
+        time: timeStr,
+        type: 'alert',
+        timestamp: Date.now()
+      },
+      ...prev
+    ]);
+  }, [currentLanguage]);
+
   // Main Background Escalation Engine (Runs continuously via setInterval and handles visibilitychange)
   const checkEscalations = useCallback(() => {
     const now = new Date();
@@ -388,6 +488,8 @@ export function ReminderProvider({ children, currentLanguage = 'en-IN', patientN
         activityHistory,
         markAsDone,
         resetReminders,
+        addReminder,
+        deleteReminder,
         activeTierAlert,
         setActiveTierAlert,
         caregiverModalAlert,

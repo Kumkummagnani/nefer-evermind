@@ -10,7 +10,7 @@ import { sounds } from '../../services/soundEffects';
 
 export default function RemindersView() {
   const { currentUser } = useApp();
-  const lang = currentUser.language || 'en-IN';
+  const lang = currentUser?.language || 'en-IN';
   const t = translations[lang] || translations['en-IN'];
   const { speak } = useSpeechContext();
 

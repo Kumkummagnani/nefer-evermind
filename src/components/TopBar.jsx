@@ -3,7 +3,7 @@ import EverMindLogo from './common/EverMindLogo';
 import { useApp } from '../context/AppContext';
 
 export default function TopBar({ onMenuClick }) {
-  const { t, activeRole } = useApp();
+  const { t, activeRole, goToRoleSelect } = useApp();
   const [timeStr, setTimeStr] = useState('');
   const [dateStr, setDateStr] = useState('');
 
@@ -26,16 +26,17 @@ export default function TopBar({ onMenuClick }) {
         padding: '12px 16px',
         position: 'sticky',
         top: 0,
-        zIndex: 50
+        zIndex: 200
       }}
     >
       <div
         style={{
-          maxWidth: 900,
+          maxWidth: 1200,
           margin: '0 auto',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          flexWrap: 'wrap',
           gap: 12
         }}
       >
@@ -77,13 +78,42 @@ export default function TopBar({ onMenuClick }) {
           </div>
         </div>
 
-        {/* Right: Clock + Date grounding */}
-        <div style={{ textAlign: 'right' }}>
-          <div style={{ fontWeight: 800, color: 'var(--color-text)', fontSize: 'calc(1.1rem * var(--font-scale))' }}>
-            {timeStr}
-          </div>
-          <div style={{ fontSize: 'calc(0.75rem * var(--font-scale))', color: 'var(--color-muted)' }}>
-            {dateStr}
+        {/* Right: Switch Profile button + Clock + Date grounding */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <button
+            type="button"
+            onClick={goToRoleSelect}
+            className="switch-profile-btn"
+            aria-label="Switch Profile"
+            style={{
+              position: 'relative',
+              zIndex: 200,
+              minHeight: '44px',
+              padding: '8px 14px',
+              borderRadius: 10,
+              background: 'var(--color-background)',
+              border: '2px solid var(--color-primary)',
+              color: 'var(--color-primary)',
+              fontWeight: 800,
+              fontSize: 'calc(0.85rem * var(--font-scale))',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              cursor: 'pointer',
+              pointerEvents: 'auto'
+            }}
+          >
+            <span>🔄</span>
+            <span>Switch Profile</span>
+          </button>
+
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontWeight: 800, color: 'var(--color-text)', fontSize: 'calc(1.1rem * var(--font-scale))' }}>
+              {timeStr}
+            </div>
+            <div style={{ fontSize: 'calc(0.75rem * var(--font-scale))', color: 'var(--color-muted)' }}>
+              {dateStr}
+            </div>
           </div>
         </div>
       </div>

@@ -20,6 +20,37 @@
 
 html { font-size: 16px; }
 
+/* Patient view — centered card with max width */
+.patient-layout {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: var(--color-background);
+  position: relative;
+}
+
+/* Caregiver dashboard — full width, uses the space */
+.caregiver-layout {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px;
+  min-height: 100vh;
+  background: var(--color-background);
+}
+
+/* On desktop, patient view gets a warm sidebar to fill the empty space */
+@media (min-width: 768px) {
+  body {
+    background: var(--color-surface);
+  }
+  .patient-layout {
+    box-shadow: 0 0 60px rgba(0,0,0,0.08);
+    border-radius: 24px;
+    margin: 40px auto;
+    min-height: calc(100vh - 80px);
+  }
+}
+
 * {
   font-size: calc(1rem * var(--font-scale));
 }
@@ -861,6 +892,7 @@ p, .p-text {
   margin-bottom: 24px;
   animation: haloPulse 2.4s infinite ease-in-out;
   position: relative;
+  pointer-events: none;
 }
 
 @keyframes haloPulse {
@@ -1032,12 +1064,20 @@ p, .p-text {
   z-index: 1300;
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
   transition: opacity 0.28s ease, visibility 0.28s ease;
 }
 
 .sidebar-overlay.open {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
+}
+
+.switch-profile-btn {
+  position: relative !important;
+  z-index: 200 !important;
+  pointer-events: auto !important;
 }
 
 .sidebar-drawer {

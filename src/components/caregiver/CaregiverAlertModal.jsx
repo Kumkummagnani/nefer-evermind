@@ -5,7 +5,9 @@ import TremorButton from '../common/TremorButton';
 import { sounds } from '../../services/soundEffects';
 
 export default function CaregiverAlertModal() {
-  const { caregiverModalAlert, acknowledgeTier3Alert } = useReminders();
+  const remindersContext = useReminders() || {};
+  const caregiverModalAlert = remindersContext.caregiverModalAlert;
+  const acknowledgeTier3Alert = remindersContext.acknowledgeTier3Alert || (() => {});
 
   if (!caregiverModalAlert) return null;
 

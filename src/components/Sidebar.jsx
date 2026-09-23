@@ -51,7 +51,8 @@ export default function Sidebar({ isOpen, onClose }) {
         background: 'var(--color-surface)',
         transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
         transition: 'transform 0.28s ease',
-        zIndex: 100,
+        zIndex: 250,
+        pointerEvents: isOpen ? 'auto' : 'none',
         overflowY: 'auto',
         padding: 24,
         boxShadow: isOpen ? '4px 0 24px rgba(0,0,0,0.15)' : 'none',
@@ -168,6 +169,23 @@ export default function Sidebar({ isOpen, onClose }) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8 }}>
         <button
           type="button"
+          onClick={() => navigateTo('home')}
+          style={{
+            padding: '12px 14px',
+            borderRadius: 8,
+            background: 'var(--color-background)',
+            border: '1px solid rgba(193, 96, 74, 0.3)',
+            color: 'var(--color-text)',
+            fontWeight: 700,
+            cursor: 'pointer',
+            textAlign: 'left'
+          }}
+        >
+          🏠 Home Screen
+        </button>
+
+        <button
+          type="button"
           onClick={() => navigateTo('games')}
           style={{
             padding: '12px 14px',
@@ -236,6 +254,23 @@ export default function Sidebar({ isOpen, onClose }) {
 
         <button
           type="button"
+          onClick={() => navigateTo('profile')}
+          style={{
+            padding: '12px 14px',
+            borderRadius: 8,
+            background: 'var(--color-background)',
+            border: '1px solid rgba(193, 96, 74, 0.3)',
+            color: 'var(--color-text)',
+            fontWeight: 700,
+            cursor: 'pointer',
+            textAlign: 'left'
+          }}
+        >
+          👤 Profile & Settings
+        </button>
+
+        <button
+          type="button"
           onClick={() => navigateTo('dashboard')}
           style={{
             padding: '12px 14px',
@@ -257,7 +292,10 @@ export default function Sidebar({ isOpen, onClose }) {
         <button
           type="button"
           onClick={handleSwitchRole}
+          className="switch-profile-btn"
           style={{
+            position: 'relative',
+            zIndex: 200,
             width: '100%',
             minHeight: 'var(--tap-min)',
             padding: 14,
@@ -266,7 +304,8 @@ export default function Sidebar({ isOpen, onClose }) {
             border: '2px solid var(--color-primary)',
             color: 'var(--color-primary)',
             fontWeight: 800,
-            cursor: 'pointer'
+            cursor: 'pointer',
+            pointerEvents: 'auto'
           }}
         >
           🔄 Switch Role / Profile

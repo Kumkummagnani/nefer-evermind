@@ -42,6 +42,67 @@ export const AppProvider = ({ children }) => {
     };
   });
 
+  const [familyMembers, setFamilyMembers] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('evermind-family') || 'null');
+      if (Array.isArray(saved) && saved.length > 0) return saved;
+    } catch (e) {}
+    return [
+      {
+        id: 'fam-1',
+        name: 'Debojit Sharma',
+        relationship: 'Son',
+        phone: '+91 98765 43210',
+        email: 'debojit.sharma@gmail.com',
+        role: 'Primary Caregiver & Daily Care Coordinator',
+        isPrimary: true
+      },
+      {
+        id: 'fam-2',
+        name: 'Priyanka Sharma',
+        relationship: 'Daughter-in-law',
+        phone: '+91 98765 43211',
+        email: 'priyanka.s@gmail.com',
+        role: 'Secondary Caregiver & Nutrition / Meals',
+        isPrimary: false
+      },
+      {
+        id: 'fam-3',
+        name: 'Aarav Sharma',
+        relationship: 'Grandson',
+        phone: '+91 98765 43212',
+        email: 'aarav.sharma@gmail.com',
+        role: 'Family Member & Cognitive Storytelling',
+        isPrimary: false
+      },
+      {
+        id: 'fam-4',
+        name: 'Dr. Anita Sen',
+        relationship: 'Attending Neurologist & Family Friend',
+        phone: '+91 98301 23456',
+        email: 'dr.anitasen@neurology.in',
+        role: 'Clinical Advisor & Specialist Care',
+        isPrimary: false
+      }
+    ];
+  });
+
+  const addFamilyMember = useCallback((member) => {
+    sounds.playSuccess();
+    const newEntry = {
+      id: 'fam-' + Date.now(),
+      ...member
+    };
+    setFamilyMembers(prev => {
+      const updated = [...prev, newEntry];
+      try {
+        localStorage.setItem('evermind-family', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+    return newEntry;
+  }, []);
+
   const [previousRole, setPreviousRole] = useState(null);
 
   const [language, setLanguage] = useState(() => {
@@ -114,7 +175,7 @@ export const AppProvider = ({ children }) => {
     return null;
   }, [activeRole, caregiverData, patientData]);
 
-  const [activeScreen, setActiveScreen] = useState('games');
+  const [activeScreen, setActiveScreen] = useState('home');
   const [activeGame, setActiveGame] = useState(null);
 
   // Cognitive Game Scores
@@ -314,6 +375,8 @@ export const AppProvider = ({ children }) => {
       gameScores,
       recordGameScore,
       clinicalProfile,
+      familyMembers,
+      addFamilyMember,
 
       // Mood & Schedule & Memories
       dailyMood,

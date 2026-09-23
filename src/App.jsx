@@ -9,12 +9,15 @@ import { ReminderProvider } from './context/ReminderContext';
 import TopBar from './components/TopBar';
 import Sidebar from './components/Sidebar';
 import RoleSelectScreen from './components/RoleSelectScreen';
-import PatientHome from './components/PatientHome';
 import CaregiverDashboard from './components/caregiver/CaregiverDashboard';
+import HomeScreen from './components/home/HomeScreen';
+import GamesScreen from './components/games/GamesScreen';
+import RemindersScreen from './components/reminders/RemindersScreen';
+import ProfileScreen from './components/profile/ProfileScreen';
+import BottomNav from './components/common/BottomNav';
 import Footer from './components/common/Footer';
 import CalmModeOverlay from './components/common/CalmModeOverlay';
 import AICompanion from './components/companion/AICompanion';
-import RemindersView from './components/reminders/RemindersView';
 import TodayScheduleView from './components/schedule/TodayScheduleView';
 import MemoryWallView from './components/memories/MemoryWallView';
 import BreathingExercisesView from './components/calm/BreathingExercisesView';
@@ -32,8 +35,32 @@ function MainApp() {
     );
   }
 
+  if (activeRole === 'caregiver') {
+    return (
+      <div className="caregiver-layout" style={{ color: 'var(--color-text)', display: 'flex', flexDirection: 'column' }}>
+        <TopBar onMenuClick={() => setSidebarOpen(true)} />
+        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        {sidebarOpen && (
+          <div
+            onClick={() => setSidebarOpen(false)}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              background: 'rgba(0,0,0,0.4)',
+              zIndex: 99,
+            }}
+          />
+        )}
+        <main className="main-content" style={{ width: '100%', flex: 1, padding: '24px 0' }}>
+          <CaregiverDashboard />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
-    <div className="app-layout" style={{ minHeight: '100vh', background: 'var(--color-background)', color: 'var(--color-text)', display: 'flex', flexDirection: 'column' }}>
+    <div className="patient-layout" style={{ color: 'var(--color-text)', display: 'flex', flexDirection: 'column' }}>
       <TopBar onMenuClick={() => setSidebarOpen(true)} />
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       {sidebarOpen && (
@@ -48,20 +75,18 @@ function MainApp() {
         />
       )}
 
-      <main className="main-content" style={{ padding: '24px 16px', maxWidth: 1000, margin: '0 auto', width: '100%', flex: 1 }}>
-        {activeRole === 'caregiver' && <CaregiverDashboard />}
-        {activeRole === 'patient' && (
-          <>
-            {activeScreen === 'games' && <PatientHome />}
-            {activeScreen === 'companion' && <AICompanion />}
-            {activeScreen === 'schedule' && <TodayScheduleView />}
-            {activeScreen === 'memories' && <MemoryWallView />}
-            {activeScreen === 'breathing' && <BreathingExercisesView />}
-            {activeScreen === 'reminders' && <RemindersView />}
-          </>
-        )}
+      <main className="main-content" style={{ padding: '16px 12px', width: '100%', flex: 1 }}>
+        {(activeScreen === 'home' || !activeScreen) && <HomeScreen />}
+        {activeScreen === 'games' && <GamesScreen />}
+        {activeScreen === 'reminders' && <RemindersScreen />}
+        {activeScreen === 'profile' && <ProfileScreen />}
+        {activeScreen === 'companion' && <AICompanion />}
+        {activeScreen === 'schedule' && <TodayScheduleView />}
+        {activeScreen === 'memories' && <MemoryWallView />}
+        {activeScreen === 'breathing' && <BreathingExercisesView />}
       </main>
 
+      <BottomNav />
       <CalmModeOverlay />
       <Footer />
     </div>
