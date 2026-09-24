@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { PhoneCall, AlertTriangle, X, Check, BellRing } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { PhoneCall, AlertTriangle, X, Check, BellRing, Ambulance, ShieldAlert, Stethoscope } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { sounds } from '../../services/soundEffects';
 
@@ -7,6 +7,7 @@ export default function PatientSosButton() {
   const {
     currentUser,
     emergencyContact,
+    clinicalProfile,
     isSosModalOpen,
     openSosModal,
     closeSosModal,
@@ -15,13 +16,32 @@ export default function PatientSosButton() {
   } = useApp();
 
   const [hasConfirmed, setHasConfirmed] = useState(false);
+  const [autoDialSeconds, setAutoDialSeconds] = useState(5);
   const currentTimeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+  const dial = (phone) => {
+    const clean = String(phone).replace(/[^0-9+]/g, '');
+    if (clean) window.location.href = `tel:${clean}`;
+  };
+
+  // Auto-dial the primary family contact after a short countdown. A patient in
+  // acute confusion may not manage another tap; the phone must ring itself.
+  useEffect(() => {
+    if (!hasConfirmed) return;
+    if (autoDialSeconds <= 0) {
+      dial(emergencyContact.phone);
+      return;
+    }
+    const timer = setTimeout(() => setAutoDialSeconds((s) => s - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [hasConfirmed, autoDialSeconds, emergencyContact.phone]);
 
   // SOS is strictly for patients
   if (currentUser.role === 'caregiver') return null;
 
   const handleConfirmYes = () => {
     setHasConfirmed(true);
+    setAutoDialSeconds(5);
     triggerSosEmergency();
   };
 
@@ -175,7 +195,7 @@ export default function PatientSosButton() {
                   }}
                 >
                   <div style={{ fontSize: 'calc(1.125rem * var(--font-scale))', color: 'var(--color-text-secondary)', marginBottom: '6px' }}>
-                    Calling Family Emergency Contact:
+                    Calling Family Emergency Contact {autoDialSeconds > 0 ? `in ${autoDialSeconds}s...` : '(dialing now)'}:
                   </div>
 
                   {/* HUGE Text for easy readability by elder */}
@@ -185,6 +205,7 @@ export default function PatientSosButton() {
 
                   <a
                     href={`tel:${emergencyContact.phone.replace(/[^0-9+]/g, '')}`}
+                    onClick={(e) => { e.preventDefault(); dial(emergencyContact.phone); }}
                     style={{
                       display: 'inline-block',
                       fontSize: 'calc(2.125rem * var(--font-scale))',
@@ -219,6 +240,40 @@ export default function PatientSosButton() {
                   <div style={{ fontSize: 'calc(1rem * var(--font-scale))', color: 'var(--color-text-secondary)', marginTop: '4px' }}>
                     Time: {currentTimeStr} · Status: <strong>"I need help right now"</strong>
                   </div>
+                </div>
+
+                {/* One-tap emergency services — no reading required */}
+                <div style={{ display: 'flex', gap: '10px', marginBottom: '26px' }}>
+                  {[
+                    { label: 'Doctor', sub: clinicalProfile?.doctorName?.split(',')[0] || 'Doctor', icon: Stethoscope, phone: clinicalProfile?.doctorPhone, bg: '#EEF2FF', color: '#4338CA' },
+                    { label: 'Ambulance', sub: '102', icon: Ambulance, phone: '102', bg: '#FEF2F2', color: '#DC2626' },
+                    { label: 'Emergency', sub: '112', icon: ShieldAlert, phone: '112', bg: '#FFFBEB', color: '#B45309' }
+                  ].map((svc) => (
+                    <button
+                      key={svc.label}
+                      type="button"
+                      onClick={() => dial(svc.phone)}
+                      style={{
+                        flex: 1,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: '4px',
+                        padding: '14px 8px',
+                        borderRadius: 'var(--radius-md)',
+                        background: svc.bg,
+                        color: svc.color,
+                        border: `2px solid ${svc.color}`,
+                        cursor: 'pointer',
+                        fontWeight: 900,
+                        fontSize: 'calc(1.125rem * var(--font-scale))'
+                      }}
+                    >
+                      <svc.icon size={28} />
+                      <span>{svc.label}</span>
+                      <span style={{ fontSize: 'calc(0.9375rem * var(--font-scale))', fontWeight: 700, opacity: 0.85 }}>{svc.sub}</span>
+                    </button>
+                  ))}
                 </div>
 
                 <button

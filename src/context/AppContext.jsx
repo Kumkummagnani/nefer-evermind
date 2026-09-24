@@ -341,8 +341,9 @@ export const AppProvider = ({ children }) => {
   const closeSosModal = useCallback(() => setIsSosModalOpen(false), []);
   const triggerSosEmergency = useCallback(() => {
     sounds.playAlert();
-    setIsSosModalOpen(false);
-    alert('Emergency alert sent to Debojit Sharma (+91 98765 43210). Help is on the way.');
+    // Keep the SOS modal open: the "Emergency Alert Activated" screen with the
+    // direct tel: links is the life-critical part of this flow. Never replace
+    // it with a blocking alert() that a confused patient cannot dismiss.
   }, []);
 
   const [isConfusionModalOpen, setIsConfusionModalOpen] = useState(false);

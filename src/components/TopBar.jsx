@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import EverMindLogo from './common/EverMindLogo';
 import { useApp } from '../context/AppContext';
+import { UserCircle, Clock } from 'lucide-react';
 
 export default function TopBar({ onMenuClick }) {
   const { t, activeRole, goToRoleSelect } = useApp();
@@ -8,113 +9,105 @@ export default function TopBar({ onMenuClick }) {
   const [dateStr, setDateStr] = useState('');
 
   useEffect(() => {
-    const updateTime = () => {
+    const update = () => {
       const now = new Date();
       setTimeStr(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-      setDateStr(now.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }));
+      setDateStr(now.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' }));
     };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
+    update();
+    const id = setInterval(update, 10000);
+    return () => clearInterval(id);
   }, []);
 
   return (
-    <header
-      style={{
-        background: 'var(--color-surface)',
-        borderBottom: '2px solid rgba(193, 96, 74, 0.2)',
-        padding: '12px 16px',
-        position: 'sticky',
-        top: 0,
-        zIndex: 200
-      }}
-    >
-      <div
-        style={{
-          maxWidth: 1200,
-          margin: '0 auto',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: 12
-        }}
-      >
-        {/* Left: ≡ Hamburger menu (min 56px) & Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+    <header className="top-bar" role="banner">
+      <div className="top-bar-inner">
+
+        {/* Left: Hamburger + Brand */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button
             type="button"
+            className="hamburger-btn"
             onClick={onMenuClick}
-            aria-label="Open Navigation Menu"
-            style={{
-              minWidth: 'var(--tap-min)',
-              minHeight: 'var(--tap-min)',
-              background: 'var(--color-background)',
-              border: '2px solid var(--color-primary)',
-              borderRadius: 12,
-              color: 'var(--color-primary)',
-              fontSize: 'calc(1.6rem * var(--font-scale))',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              lineHeight: 1
-            }}
+            aria-label="Open navigation menu"
+            aria-expanded="false"
           >
             ≡
           </button>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <EverMindLogo size={40} />
+          <div className="brand-mark" onClick={() => {}} aria-hidden="true">
+            <EverMindLogo size={38} />
             <div>
-              <div style={{ fontWeight: 800, color: 'var(--color-primary)', fontSize: 'calc(1.2rem * var(--font-scale))', lineHeight: 1.1 }}>
-                Evermind
-              </div>
-              <div style={{ fontSize: 'calc(0.75rem * var(--font-scale))', color: 'var(--color-muted)' }}>
-                {activeRole === 'caregiver' ? 'Caregiver Portal' : (t.appTagline || 'Always with you.')}
+              <div className="brand-name">Evermind</div>
+              <div className="brand-tagline">
+                {activeRole === 'caregiver'
+                  ? 'Caregiver Portal'
+                  : (t?.appTagline || 'Always with you')}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right: Switch Profile button + Clock + Date grounding */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        {/* Right: Clock grounding + profile switch */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Grounding clock — helps patients orient to time of day */}
+          <div
+            className="grounding-clock"
+            aria-label={`Current time: ${timeStr}, ${dateStr}`}
+            style={{ flexDirection: 'column', alignItems: 'flex-end', gap: '1px', padding: '6px 14px' }}
+          >
+            <span style={{
+              fontSize: 'calc(1.1rem * var(--font-scale))',
+              fontWeight: 900,
+              color: 'var(--color-primary)',
+              lineHeight: 1.2
+            }}>
+              {timeStr}
+            </span>
+            <span style={{
+              fontSize: 'calc(0.6875rem * var(--font-scale))',
+              fontWeight: 600,
+              color: 'var(--color-text-muted)',
+              lineHeight: 1
+            }}>
+              {dateStr}
+            </span>
+          </div>
+
+          {/* Switch Profile */}
           <button
             type="button"
             onClick={goToRoleSelect}
             className="switch-profile-btn"
-            aria-label="Switch Profile"
+            aria-label="Switch profile or sign out"
+            title="Switch Profile"
             style={{
               position: 'relative',
               zIndex: 200,
+              minWidth: '44px',
               minHeight: '44px',
-              padding: '8px 14px',
-              borderRadius: 10,
-              background: 'var(--color-background)',
-              border: '2px solid var(--color-primary)',
-              color: 'var(--color-primary)',
-              fontWeight: 800,
-              fontSize: 'calc(0.85rem * var(--font-scale))',
+              background: 'var(--color-surface-warm)',
+              border: '1.5px solid var(--color-border)',
+              borderRadius: 'var(--radius-sm)',
+              color: 'var(--color-text-muted)',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: 6,
+              justifyContent: 'center',
               cursor: 'pointer',
-              pointerEvents: 'auto'
+              pointerEvents: 'auto',
+              transition: 'all 0.18s ease',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.borderColor = 'var(--color-primary)';
+              e.currentTarget.style.color = 'var(--color-primary)';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.borderColor = 'var(--color-border)';
+              e.currentTarget.style.color = 'var(--color-text-muted)';
             }}
           >
-            <span>🔄</span>
-            <span>Switch Profile</span>
+            <UserCircle size={22} />
           </button>
-
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ fontWeight: 800, color: 'var(--color-text)', fontSize: 'calc(1.1rem * var(--font-scale))' }}>
-              {timeStr}
-            </div>
-            <div style={{ fontSize: 'calc(0.75rem * var(--font-scale))', color: 'var(--color-muted)' }}>
-              {dateStr}
-            </div>
-          </div>
         </div>
       </div>
     </header>

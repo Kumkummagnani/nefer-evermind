@@ -23,35 +23,27 @@ import MemoryWallView from './components/memories/MemoryWallView';
 import BreathingExercisesView from './components/calm/BreathingExercisesView';
 import ErrorBoundary from './components/common/ErrorBoundary';
 
+/* ── Main App Shell ──────────────────────────────────────────────────────── */
 function MainApp() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { activeRole, activeScreen } = useApp();
 
+  // No role selected — show the landing/role-select screen
   if (!activeRole) {
     return (
-      <div className="app-layout" style={{ minHeight: '100vh', background: 'var(--color-background)', color: 'var(--color-text)' }}>
+      <div className="app-layout">
         <RoleSelectScreen />
       </div>
     );
   }
 
+  // Caregiver view — full-width dashboard
   if (activeRole === 'caregiver') {
     return (
-      <div className="caregiver-layout" style={{ color: 'var(--color-text)', display: 'flex', flexDirection: 'column' }}>
+      <div className="caregiver-layout">
         <TopBar onMenuClick={() => setSidebarOpen(true)} />
         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-        {sidebarOpen && (
-          <div
-            onClick={() => setSidebarOpen(false)}
-            style={{
-              position: 'fixed',
-              inset: 0,
-              background: 'rgba(0,0,0,0.4)',
-              zIndex: 99,
-            }}
-          />
-        )}
-        <main className="main-content" style={{ width: '100%', flex: 1, padding: '24px 0' }}>
+        <main className="main-content" style={{ padding: '24px 0' }}>
           <CaregiverDashboard />
         </main>
         <Footer />
@@ -59,40 +51,35 @@ function MainApp() {
     );
   }
 
+  // Patient view — centered mobile card
   return (
-    <div className="patient-layout" style={{ color: 'var(--color-text)', display: 'flex', flexDirection: 'column' }}>
+    <div className="patient-layout">
       <TopBar onMenuClick={() => setSidebarOpen(true)} />
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      {sidebarOpen && (
-        <div
-          onClick={() => setSidebarOpen(false)}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.4)',
-            zIndex: 99,
-          }}
-        />
-      )}
 
-      <main className="main-content" style={{ padding: '16px 12px', width: '100%', flex: 1 }}>
+      <main
+        className="main-content"
+        id="main-content"
+        tabIndex={-1}
+        aria-label="Main content area"
+      >
         {(activeScreen === 'home' || !activeScreen) && <HomeScreen />}
-        {activeScreen === 'games' && <GamesScreen />}
+        {activeScreen === 'games'     && <GamesScreen />}
         {activeScreen === 'reminders' && <RemindersScreen />}
-        {activeScreen === 'profile' && <ProfileScreen />}
+        {activeScreen === 'profile'   && <ProfileScreen />}
         {activeScreen === 'companion' && <AICompanion />}
-        {activeScreen === 'schedule' && <TodayScheduleView />}
-        {activeScreen === 'memories' && <MemoryWallView />}
+        {activeScreen === 'schedule'  && <TodayScheduleView />}
+        {activeScreen === 'memories'  && <MemoryWallView />}
         {activeScreen === 'breathing' && <BreathingExercisesView />}
       </main>
 
       <BottomNav />
       <CalmModeOverlay />
-      <Footer />
     </div>
   );
 }
 
+/* ── Provider Bridges ────────────────────────────────────────────────────── */
 function ReminderBridge({ children }) {
   const { currentUser, language } = useApp();
   const { speak } = useSpeechContext();
@@ -110,16 +97,14 @@ function ReminderBridge({ children }) {
 
 function SpeechBridge({ children }) {
   const { language } = useApp();
-
   return (
     <SpeechProvider currentLanguage={language || 'en-IN'}>
-      <ReminderBridge>
-        {children}
-      </ReminderBridge>
+      <ReminderBridge>{children}</ReminderBridge>
     </SpeechProvider>
   );
 }
 
+/* ── Root Export ─────────────────────────────────────────────────────────── */
 export default function App() {
   return (
     <AppProvider>

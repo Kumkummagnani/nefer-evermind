@@ -1,87 +1,60 @@
 import React from 'react';
 import { Home, Gamepad2, Bell, User } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { sounds } from '../../services/soundEffects';
+
+const TABS = [
+  { id: 'home', label: 'Home', icon: Home, ariaLabel: 'Go to home screen' },
+  { id: 'games', label: 'Games', icon: Gamepad2, ariaLabel: 'Go to mind games' },
+  { id: 'reminders', label: 'Reminders', icon: Bell, ariaLabel: 'Go to daily reminders' },
+  { id: 'profile', label: 'Profile', icon: User, ariaLabel: 'Go to your profile' },
+];
 
 export default function BottomNav() {
-  const { activeScreen, setActiveScreen, setActiveGame } = useApp();
+  const { activeScreen, setActiveScreen, setActiveGame, t } = useApp();
 
   const handleTabClick = (tabId) => {
+    sounds.playTap();
     setActiveScreen(tabId);
     setActiveGame(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const tabs = [
-    { id: 'home', label: 'Home', icon: Home, emoji: '🏠' },
-    { id: 'games', label: 'Games', icon: Gamepad2, emoji: '🎮' },
-    { id: 'reminders', label: 'Reminders', icon: Bell, emoji: '💊' },
-    { id: 'profile', label: 'Profile', icon: User, emoji: '👤' }
-  ];
+  const labels = {
+    home: t?.navHome || 'Home',
+    games: t?.navGames || 'Games',
+    reminders: t?.navReminders || 'Reminders',
+    profile: t?.navProfile || 'Profile',
+  };
 
   return (
     <nav
-      className="bottom-nav-bar"
-      aria-label="Bottom Navigation"
-      style={{
-        position: 'sticky',
-        bottom: 0,
-        zIndex: 150,
-        width: '100%',
-        maxWidth: 480,
-        margin: '0 auto',
-        background: 'var(--color-surface, #F2EBE3)',
-        borderTop: '2px solid rgba(193, 96, 74, 0.2)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-around',
-        padding: '6px 4px 8px 4px',
-        boxShadow: '0 -4px 16px rgba(0,0,0,0.06)'
-      }}
+      className="bottom-nav"
+      aria-label="Main navigation"
+      role="navigation"
     >
-      {tabs.map((tab) => {
-        const isActive = activeScreen === tab.id;
+      {TABS.map((tab) => {
+        const isActive = activeScreen === tab.id || (!activeScreen && tab.id === 'home');
         const IconComponent = tab.icon;
+        const label = labels[tab.id] || tab.label;
 
         return (
           <button
             key={tab.id}
             type="button"
+            className={`bottom-nav-item${isActive ? ' active' : ''}`}
             onClick={() => handleTabClick(tab.id)}
-            style={{
-              flex: 1,
-              minHeight: '56px',
-              background: 'transparent',
-              border: 'none',
-              borderRadius: 12,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 4,
-              cursor: 'pointer',
-              color: isActive ? 'var(--color-primary)' : 'var(--color-muted)',
-              fontWeight: isActive ? 800 : 600,
-              padding: '6px 4px',
-              transition: 'all 0.15s ease'
-            }}
+            aria-label={tab.ariaLabel}
+            aria-current={isActive ? 'page' : undefined}
           >
-            <div
-              style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: 8,
-                background: isActive ? 'var(--color-primary-light)' : 'transparent',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'all 0.15s ease'
-              }}
-            >
-              <IconComponent size={22} color={isActive ? 'var(--color-primary)' : 'currentColor'} />
+            <div className="bottom-nav-icon-wrap">
+              <IconComponent
+                size={22}
+                strokeWidth={isActive ? 2.5 : 2}
+                aria-hidden="true"
+              />
             </div>
-            <span style={{ fontSize: 'calc(0.75rem * var(--font-scale))', lineHeight: 1 }}>
-              {tab.label}
-            </span>
+            <span aria-hidden="true">{label}</span>
           </button>
         );
       })}
